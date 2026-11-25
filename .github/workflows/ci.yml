@@ -1,0 +1,52 @@
+---
+name: ci
+
+"on":
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Python ${{ matrix.python }}, Libcloud ${{ matrix.libcloud }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.11", "3.12", "3.13"]
+        libcloud: ["3.8.0", "3.9.1"]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install -e ".[test]" "apache-libcloud==${{ matrix.libcloud }}" ruff build
+      - name: Ruff
+        run: ruff check . && ruff format --check .
+      - name: Unit tests
+        run: pytest tests --ignore=tests/test_live.py
+      - name: Build
+        run: python -m build
+
+  # Calls the real NodeRings API (free objects only). Runs when the NODERINGS_TOKEN
+  # secret is set, on pushes and on pull requests from this repository.
+  live:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    env:
+      NODERINGS_TOKEN: ${{ secrets.NODERINGS_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        if: env.NODERINGS_TOKEN != ''
+      - uses: actions/setup-python@v5
+        if: env.NODERINGS_TOKEN != ''
+        with:
+          python-version: "3.12"
+      - if: env.NODERINGS_TOKEN != ''
+        run: pip install -e ".[test]" && pytest tests/test_live.py -v
