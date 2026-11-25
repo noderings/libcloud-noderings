@@ -3,6 +3,7 @@
 [![CI](https://github.com/noderings/libcloud-noderings/actions/workflows/ci.yml/badge.svg)](https://github.com/noderings/libcloud-noderings/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/libcloud-noderings.svg)](https://pypi.org/project/libcloud-noderings/)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![Python](https://img.shields.io/pypi/pyversions/libcloud-noderings.svg)](https://pypi.org/project/libcloud-noderings/)
 
 [Apache Libcloud](https://libcloud.apache.org) drivers for [NodeRings](https://noderings.com):
 a **compute** driver for NodeRings virtual machines and a **DNS** driver for NodeRings DNS.
