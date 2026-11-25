@@ -14,7 +14,7 @@ import libcloud_noderings
 from libcloud.compute.base import NodeAuthSSHKey
 from libcloud.compute.providers import get_driver
 
-libcloud_noderings.register()          # once, before get_driver("noderings")
+libcloud_noderings.register()  # once, before get_driver("noderings")
 driver = get_driver("noderings")("YOUR_TOKEN")
 
 location = next(l for l in driver.list_locations() if l.name == "Ashburn")
@@ -22,7 +22,10 @@ size = next(s for s in driver.list_sizes(location) if s.id == "SC-GC-1C-1G-20")
 image = next(i for i in driver.list_images() if i.id == "ubuntu_24_04")
 
 node = driver.create_node(
-    "web-1", size, image, location=location,
+    "web-1",
+    size,
+    image,
+    location=location,
     auth=NodeAuthSSHKey(open("/home/me/.ssh/id_ed25519.pub").read()),
 )
 node, ips = driver.wait_until_running([node])[0]
@@ -48,7 +51,7 @@ pip install libcloud-noderings
 Pass the token as the driver's key, or leave it out and set `NODERINGS_TOKEN`:
 
 ```python
-driver = get_driver("noderings")()     # reads NODERINGS_TOKEN
+driver = get_driver("noderings")()  # reads NODERINGS_TOKEN
 ```
 
 `ex_organization_id=` (or `NODERINGS_ORGANIZATION_ID`) picks the organization for tokens that
@@ -93,7 +96,7 @@ from libcloud.dns.providers import get_driver as get_dns_driver
 
 dns = get_dns_driver("noderings")("YOUR_TOKEN")
 zone = dns.create_zone("example.com", extra={"dnssec": True})
-print(zone.extra["nameservers"])                     # set these at your registrar
+print(zone.extra["nameservers"])  # set these at your registrar
 
 dns.create_record("www", zone, "A", "192.0.2.10", extra={"ttl": 300})
 dns.create_record("www", zone, "A", "192.0.2.11")
