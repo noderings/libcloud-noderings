@@ -65,7 +65,7 @@ reach more than one.
 | `list_locations()` | Cities where servers are sold. The ID is `Country/City`, such as `United States/Ashburn` |
 | `list_sizes(location=None)` | Plans, by plan code (`SC-GC-1C-1G-20`). vCPU, memory and disk are read from the code |
 | `list_images()` | Operating systems: `ubuntu_24_04`, `debian_13`, `rocky_9`... |
-| `create_node(name, size, image, location, auth=...)` | Orders the cheapest matching offer and waits for an address |
+| `create_node(name, size, image, location, auth=...)` | Orders the cheapest matching offer, or one from the provider you name, and waits for an address |
 | `list_nodes()`, `ex_get_node(id_or_hostname)` | Servers, with state, IPs and `extra` (plan, distro, tags, firewall, provider, city) |
 | `reboot_node`, `start_node`, `stop_node` | Power operations; each waits until it is done |
 | `destroy_node(node)` | Deletes the server |
@@ -82,9 +82,14 @@ reach more than one.
 | `ex_firewall_ruleset` | Name or ID of a firewall ruleset to attach |
 | `ex_billing_type` | `usage` (hourly, default), `subscription` or `free` |
 | `ex_sort` | `price` (cheapest, default) or `rating` (best rated) |
-| `ex_provider_id` | Only consider offers from this provider |
+| `ex_provider` | Only order from this provider: its provider ID, its storefront slug (such as `acme-hosting`) or its name (`Acme Hosting`, any case) |
+| `ex_provider_id` | Only consider offers from this provider ID; takes precedence over `ex_provider` |
 | `ex_plan_id`, `ex_region_id` | An exact plan and region, instead of size and location |
 | `ex_wait` | Wait until the server is provisioned and has an address (default `True`) |
+
+Without `ex_provider` the cheapest offer wins (compute price, then rating), so the provider
+can change between servers. Set `ex_provider` to keep it fixed. A name that more than one
+provider uses raises `LibcloudError`; give the ID or storefront slug then.
 
 Orders carry an idempotency key, so a lost response is retried without ordering a second
 server. Extra methods: `ex_set_tags(node, tags)`, `ex_attach_firewall(node, ruleset)` and

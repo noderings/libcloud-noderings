@@ -198,6 +198,7 @@ class NodeRingsNodeDriver(NodeRingsDriverMixin, NodeDriver):
         ex_billing_type="usage",
         ex_sort="price",
         ex_provider_id=None,
+        ex_provider=None,
         ex_plan_id=None,
         ex_region_id=None,
         ex_wait=True,
@@ -217,7 +218,11 @@ class NodeRingsNodeDriver(NodeRingsDriverMixin, NodeDriver):
         :param ex_firewall_ruleset: name or ID of a firewall ruleset to attach
         :param ex_billing_type: ``usage`` (hourly, default), ``subscription`` or ``free``
         :param ex_sort: ``price`` (cheapest, default) or ``rating`` (best rated)
-        :param ex_provider_id: only consider offers from this provider
+        :param ex_provider_id: only consider offers from this provider ID; takes precedence
+            over ``ex_provider``
+        :param ex_provider: only consider offers from this provider, given by its ID, its
+            storefront slug (such as ``acme-hosting``) or its name (``Acme Hosting``, any
+            case); a name that more than one provider uses raises an error
         :param ex_plan_id: exact plan ID, instead of size and location
         :param ex_region_id: exact region ID, with ``ex_plan_id``
         :param ex_wait: wait until the server is provisioned and has an address (default True)
@@ -241,6 +246,7 @@ class NodeRingsNodeDriver(NodeRingsDriverMixin, NodeDriver):
                 billing_type=ex_billing_type,
                 provider_id=ex_provider_id,
                 sort=ex_sort,
+                provider=ex_provider,
             )
         distro = image.id if isinstance(image, NodeImage) else str(image)
 
