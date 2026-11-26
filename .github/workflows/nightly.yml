@@ -1,0 +1,38 @@
+# Nightly live tests against the NodeRings API (DNS and SSH key lifecycle
+# with cleanup). Runs only when the NODERINGS_TOKEN secret is set; otherwise
+# the job skips with a notice and succeeds. NODERINGS_TEST_BILLED is not set,
+# so billed VM tests skip. Optional secret: NODERINGS_TEST_DOMAIN.
+name: Nightly live API
+
+"on":
+  schedule:
+    - cron: "17 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nightly-live
+  cancel-in-progress: false
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NODERINGS_TOKEN: ${{ secrets.NODERINGS_TOKEN }}
+      NODERINGS_TEST_DOMAIN: ${{ secrets.NODERINGS_TEST_DOMAIN }}
+    steps:
+      - name: Skip when NODERINGS_TOKEN is not set
+        if: env.NODERINGS_TOKEN == ''
+        run: echo "::notice title=Live tests skipped::Add the repository secret NODERINGS_TOKEN (a service account token for a test organization) to run them."
+      - uses: actions/checkout@v7
+        if: env.NODERINGS_TOKEN != ''
+      - uses: actions/setup-python@v7
+        if: env.NODERINGS_TOKEN != ''
+        with:
+          python-version: "3.12"
+      - name: Live tests
+        if: env.NODERINGS_TOKEN != ''
+        run: pip install -e ".[test]" && pytest tests/test_live.py -v
