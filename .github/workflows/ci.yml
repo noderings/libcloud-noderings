@@ -12,7 +12,8 @@ permissions:
 jobs:
   test:
     name: Python ${{ matrix.python }}, Libcloud ${{ matrix.libcloud }}
-    runs-on: ubuntu-latest
+    # Pushes to main run on the org runner; pull requests and everything else stay GitHub-hosted.
+    runs-on: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && fromJSON('["self-hosted","linux","x64"]') || 'ubuntu-latest' }}
     strategy:
       fail-fast: false
       matrix:
@@ -37,7 +38,8 @@ jobs:
   # secret is set, on pushes and on pull requests from this repository.
   live:
     needs: test
-    runs-on: ubuntu-latest
+    # Pushes to main run on the org runner; pull requests and everything else stay GitHub-hosted.
+    runs-on: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && fromJSON('["self-hosted","linux","x64"]') || 'ubuntu-latest' }}
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
     env:
       NODERINGS_TOKEN: ${{ secrets.NODERINGS_TOKEN }}
