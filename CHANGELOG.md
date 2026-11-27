@@ -4,6 +4,13 @@ All notable changes to this project are documented in this file. The format foll
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.2.1](https://github.com/noderings/libcloud-noderings/compare/v0.2.0...v0.2.1) (2026-11-27)
+
+
+### Documentation
+
+* link the official Go SDK in the README ([#7](https://github.com/noderings/libcloud-noderings/issues/7)) ([553cffc](https://github.com/noderings/libcloud-noderings/commit/553cffc3632188f5e6892d0512247a653eae3a2a))
+
 ## [0.2.0](https://github.com/noderings/libcloud-noderings/compare/v0.1.0...v0.2.0) (2026-11-26)
 
 
